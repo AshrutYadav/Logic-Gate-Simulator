@@ -1,17 +1,8 @@
 package backend;
 
-/**
- * Factory class for instantiating logic gates based on GateType.
- * Demonstrates: Factory Method Pattern, Runtime Polymorphism, Static Utility Methods.
- */
+// Factory for instantiating logic gates.
 public class GateFactory {
 
-    /**
-     * Creates a concrete LogicGate instance polymorphically.
-     *
-     * @param type GateType enum value
-     * @return LogicGate reference to the newly created gate, or null if unknown
-     */
     public static LogicGate createGate(GateType type) {
         if (type == null) {
             return null;
@@ -28,12 +19,7 @@ public class GateFactory {
         };
     }
 
-    /**
-     * Converts a GateType enum to its canonical string representation.
-     *
-     * @param type GateType enum
-     * @return String representation (e.g., "AND", "OR")
-     */
+    // Converts GateType to string.
     public static String gateTypeToString(GateType type) {
         if (type == null) {
             return "UNKNOWN";
@@ -41,13 +27,7 @@ public class GateFactory {
         return type.name();
     }
 
-    /**
-     * Converts a string representation to a GateType enum.
-     * Rejects invalid gate names strictly by returning null (does not silently default).
-     *
-     * @param str Case-insensitive string name
-     * @return GateType if valid, or null if unrecognized
-     */
+    // Converts string to GateType, or returns null if invalid.
     public static GateType stringToGateType(String str) {
         if (str == null || str.trim().isEmpty()) {
             return null;

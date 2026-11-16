@@ -11,23 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Backend verification suite for Logic Gate Simulator.
- * Validates all Boolean evaluation, truth-table generation, factory creation,
- * persistence/validation edge cases, and the Boolean Expression Lab recursive-descent
- * parser and truth-table evaluator without requiring external testing frameworks.
- */
+// Automated test suite for backend logic.
 public class BackendTest {
 
     private static int testsPassed = 0;
     private static int testsTotal = 0;
 
     public static void main(String[] args) {
-        System.out.println("=================================================");
         System.out.println("  LOGIC GATE SIMULATOR - BACKEND TEST SUITE");
-        System.out.println("=================================================");
-
-        // 1. Existing Individual Gate Simulator Backend Tests
+        
+        // Gate tests
         testAndGate();
         testOrGate();
         testNotGate();
@@ -39,7 +32,7 @@ public class BackendTest {
         testTruthTableGeneration();
         testGateStorage();
 
-        // 2. New Boolean Expression Lab Backend Tests
+        // Expression lab tests
         testExpressionOperators();
         testExpressionPrecedenceAndParentheses();
         testExpressionNested();
@@ -48,9 +41,7 @@ public class BackendTest {
         testExpressionValidationAndErrors();
         testExpressionEvaluationStepsAndMath();
 
-        System.out.println("=================================================");
         System.out.printf("  TEST RESULTS: %d / %d PASSED\n", testsPassed, testsTotal);
-        System.out.println("=================================================");
 
         if (testsPassed != testsTotal) {
             System.exit(1);
@@ -238,10 +229,7 @@ public class BackendTest {
         }
     }
 
-    // ========================================================================
-    // Boolean Expression Lab Tests
-    // ========================================================================
-
+    // Boolean Expression Lab tests
     private static void testExpressionOperators() {
         System.out.println("\nTesting Boolean Expression Lab - All Operators:");
         try {
@@ -300,37 +288,30 @@ public class BackendTest {
         System.out.println("\nTesting Boolean Expression Lab - Precedence & Parentheses:");
         try {
             // Precedence: AND over OR
-            // "A OR B AND C" should parse as A OR (B AND C)
-            // If A=0, B=1, C=0: A OR (1 AND 0) = 0 OR 0 = 0
-            // If (A OR B) AND C: (0 OR 1) AND 0 = 1 AND 0 = 0, but if A=1, B=0, C=0: (1 OR 0) AND 0 = 0 vs 1 OR (0 AND 0) = 1
             BooleanExpression p1 = BooleanExpression.parse("A OR B AND C");
             assertTrue("Precedence A OR B AND C with A=1, B=0, C=0 -> 1", p1.evaluate(true, false, false));
             assertTrue("Precedence A OR B AND C with A=0, B=1, C=0 -> 0", !p1.evaluate(false, true, false));
             assertTrue("Precedence A OR B AND C with A=0, B=1, C=1 -> 1", p1.evaluate(false, true, true));
 
-            // Parentheses override precedence: (A OR B) AND C
+            // Parentheses override: (A OR B) AND C
             BooleanExpression p2 = BooleanExpression.parse("(A OR B) AND C");
             assertTrue("Override (A OR B) AND C with A=1, B=0, C=0 -> 0", !p2.evaluate(true, false, false));
             assertTrue("Override (A OR B) AND C with A=1, B=0, C=1 -> 1", p2.evaluate(true, false, true));
 
             // Precedence: NOT over AND
-            // "NOT A AND B" should parse as (NOT A) AND B
             BooleanExpression p3 = BooleanExpression.parse("NOT A AND B");
             assertTrue("Precedence NOT A AND B with A=0, B=1 -> 1", p3.evaluate(false, true, false));
             assertTrue("Precedence NOT A AND B with A=1, B=1 -> 0", !p3.evaluate(true, true, false));
 
-            // Parentheses override NOT: NOT (A AND B)
+            // Parentheses override: NOT (A AND B)
             BooleanExpression p4 = BooleanExpression.parse("NOT (A AND B)");
             assertTrue("Override NOT (A AND B) with A=0, B=1 -> 1", p4.evaluate(false, true, false));
             assertTrue("Override NOT (A AND B) with A=1, B=1 -> 0", !p4.evaluate(true, true, false));
             assertTrue("Override NOT (A AND B) with A=0, B=0 -> 1", p4.evaluate(false, false, false));
 
             // Precedence: AND over XOR
-            // "A XOR B AND C" should parse as A XOR (B AND C)
             BooleanExpression p5 = BooleanExpression.parse("A XOR B AND C");
-            // A=1, B=1, C=1 -> 1 XOR (1 AND 1) = 1 XOR 1 = 0
             assertTrue("Precedence A XOR B AND C with 1,1,1 -> 0", !p5.evaluate(true, true, true));
-            // A=1, B=1, C=0 -> 1 XOR (1 AND 0) = 1 XOR 0 = 1
             assertTrue("Precedence A XOR B AND C with 1,1,0 -> 1", p5.evaluate(true, true, false));
 
             // Parentheses override: (A XOR B) AND C
@@ -338,7 +319,7 @@ public class BackendTest {
             assertTrue("(A XOR B) AND C with 1,0,1 -> 1", p6.evaluate(true, false, true));
             assertTrue("(A XOR B) AND C with 1,1,1 -> 0", !p6.evaluate(true, true, true));
 
-            // Required user example: (A OR B) AND (NOT C)
+            // Nested parentheses
             BooleanExpression p7 = BooleanExpression.parse("(A OR B) AND (NOT C)");
             assertTrue("(A OR B) AND (NOT C) with 1,0,0 -> 1", p7.evaluate(true, false, false));
             assertTrue("(A OR B) AND (NOT C) with 1,0,1 -> 0", !p7.evaluate(true, false, true));
@@ -351,26 +332,23 @@ public class BackendTest {
     private static void testExpressionNested() {
         System.out.println("\nTesting Boolean Expression Lab - Nested Expressions:");
         try {
-            // Double NOT: NOT NOT A == A
+            // Double NOT
             BooleanExpression dNot = BooleanExpression.parse("NOT NOT A");
             assertTrue("Double NOT 0 -> 0", !dNot.evaluate(false, false, false));
             assertTrue("Double NOT 1 -> 1", dNot.evaluate(true, false, false));
 
-            // Triple NOT: NOT NOT NOT A == NOT A
+            // Triple NOT
             BooleanExpression tNot = BooleanExpression.parse("NOT NOT NOT A");
             assertTrue("Triple NOT 0 -> 1", tNot.evaluate(false, false, false));
             assertTrue("Triple NOT 1 -> 0", !tNot.evaluate(true, false, false));
 
-            // Complex nesting: NOT (A OR (B AND (NOT C)))
+            // Nested sub-expressions
             BooleanExpression comp = BooleanExpression.parse("NOT (A OR (B AND (NOT C)))");
-            // If A=0, B=1, C=0: B AND NOT C = 1 AND 1 = 1; A OR 1 = 1; NOT 1 = 0
             assertTrue("Nested comp with 0,1,0 -> 0", !comp.evaluate(false, true, false));
-            // If A=0, B=0, C=0: B AND NOT C = 0; A OR 0 = 0; NOT 0 = 1
             assertTrue("Nested comp with 0,0,0 -> 1", comp.evaluate(false, false, false));
 
-            // Multi-operator chain: A XOR B XOR C
+            // Chained XOR
             BooleanExpression chain = BooleanExpression.parse("A XOR B XOR C");
-            // 0,0,0 -> 0; 0,0,1 -> 1; 0,1,1 -> 0; 1,1,1 -> 1
             assertTrue("Chained XOR 0,0,0 -> 0", !chain.evaluate(false, false, false));
             assertTrue("Chained XOR 0,0,1 -> 1", chain.evaluate(false, false, true));
             assertTrue("Chained XOR 0,1,1 -> 0", !chain.evaluate(false, true, true));
@@ -407,21 +385,14 @@ public class BackendTest {
             List<ExpressionTruthTableRow> table3 = expr3.generateTruthTable();
             assertTrue("3 vars generate 8 rows", table3.size() == 8);
 
-            // Row 0: 0,0,0 -> 0
+            // Validate all 8 rows
             assertTrue("3-var row 0: 0,0,0 -> 0", !table3.get(0).isOutput());
-            // Row 1: 0,0,1 -> 1
             assertTrue("3-var row 1: 0,0,1 -> 1", table3.get(1).isOutput());
-            // Row 2: 0,1,0 -> 0
             assertTrue("3-var row 2: 0,1,0 -> 0", !table3.get(2).isOutput());
-            // Row 3: 0,1,1 -> 1
             assertTrue("3-var row 3: 0,1,1 -> 1", table3.get(3).isOutput());
-            // Row 4: 1,0,0 -> 0
             assertTrue("3-var row 4: 1,0,0 -> 0", !table3.get(4).isOutput());
-            // Row 5: 1,0,1 -> 1
             assertTrue("3-var row 5: 1,0,1 -> 1", table3.get(5).isOutput());
-            // Row 6: 1,1,0 -> 1
             assertTrue("3-var row 6: 1,1,0 -> 1", table3.get(6).isOutput());
-            // Row 7: 1,1,1 -> 1
             assertTrue("3-var row 7: 1,1,1 -> 1", table3.get(7).isOutput());
 
             // Active row matching test

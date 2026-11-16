@@ -1,8 +1,6 @@
 package backend;
 
-/**
- * Represents a single row in a logic gate truth table.
- */
+// Represents a single row in a truth table.
 public class TruthTableRow {
     private final boolean inputA;
     private final boolean inputB;

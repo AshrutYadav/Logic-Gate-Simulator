@@ -7,18 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Handles saving and loading the simulator state to/from a text file.
- * Demonstrates: Java File I/O (BufferedReader, BufferedWriter, Path),
- * Validation, Error Handling, and Separation of Concerns.
- */
+// Handles saving and loading the simulator state to and from a file.
 public class GateStorage {
 
     public static final String DEFAULT_FILEPATH = "saved_state.txt";
 
-    /**
-     * Data transfer object representing the simulator state.
-     */
+    // Holds the simulator state.
     public static class SimulatorState {
         private final GateType gateType;
         private final boolean inputA;
@@ -43,9 +37,7 @@ public class GateStorage {
         }
     }
 
-    /**
-     * Result object to encapsulate operation outcome without UI coupling.
-     */
+    // Encapsulates the result of save/load operations.
     public static class StorageResult {
         private final boolean success;
         private final String message;
@@ -70,20 +62,12 @@ public class GateStorage {
         }
     }
 
-    /**
-     * Saves the current simulator state to the default text file.
-     */
+    // Saves state to default file.
     public static StorageResult saveSimulatorState(SimulatorState state) {
         return saveSimulatorState(state, DEFAULT_FILEPATH);
     }
 
-    /**
-     * Saves the current simulator state to a specified file path.
-     *
-     * @param state State to save
-     * @param filepath Destination path
-     * @return StorageResult indicating success or failure
-     */
+    // Saves state to specified file path.
     public static StorageResult saveSimulatorState(SimulatorState state, String filepath) {
         if (state == null || state.getGateType() == null) {
             return new StorageResult(false, "Invalid simulator state: Gate type cannot be null.", state);
@@ -104,20 +88,12 @@ public class GateStorage {
         }
     }
 
-    /**
-     * Loads and validates the simulator state from the default text file.
-     */
+    // Loads state from default file.
     public static StorageResult loadSimulatorState() {
         return loadSimulatorState(DEFAULT_FILEPATH);
     }
 
-    /**
-     * Loads and strictly validates the simulator state from the specified file.
-     * Guarantees that invalid files do not corrupt the existing state.
-     *
-     * @param filepath Source path
-     * @return StorageResult with loaded state on success, or error message on failure
-     */
+    // Loads and validates state from specified file.
     public static StorageResult loadSimulatorState(String filepath) {
         Path path = Paths.get(filepath);
 
@@ -202,9 +178,7 @@ public class GateStorage {
         return new StorageResult(true, details, newState);
     }
 
-    /**
-     * Helper to parse flexible boolean formats: 1/0, TRUE/FALSE, HIGH/LOW.
-     */
+    // Helper to parse boolean values: 1/0, true/false, high/low.
     private static Boolean parseBooleanValue(String val) {
         if (val == null) return null;
         val = val.trim().toUpperCase();

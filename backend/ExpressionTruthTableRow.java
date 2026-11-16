@@ -4,10 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Represents a single row in a Boolean expression truth table.
- * Supports arbitrary variable assignments (A, B, C) and calculated output.
- */
+// Represents a single row in a Boolean expression truth table.
 public class ExpressionTruthTableRow {
     private final Map<String, Boolean> inputs;
     private final boolean output;
@@ -40,9 +37,7 @@ public class ExpressionTruthTableRow {
         return output ? "1" : "0";
     }
 
-    /**
-     * Checks if this row's input combination matches the given active inputs.
-     */
+    // Checks if this row's inputs match the given active inputs.
     public boolean matchesInputs(Map<String, Boolean> currentInputs) {
         if (currentInputs == null) return false;
         for (Map.Entry<String, Boolean> entry : inputs.entrySet()) {

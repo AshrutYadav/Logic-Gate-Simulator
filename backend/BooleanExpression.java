@@ -2,30 +2,10 @@ package backend;
 
 import java.util.*;
 
-/**
- * Robust Boolean expression tokenizer, recursive-descent parser, and evaluator.
- * Evaluates arbitrary valid Boolean expressions over variables A, B, and C.
- *
- * Supported Operators (in order of precedence):
- * 1. Parentheses: ( ... )
- * 2. NOT: Unary prefix inversion (NOT A, NOT (A OR B))
- * 3. AND, NAND: Multiplicative binary logic
- * 4. XOR, XNOR: Exclusive binary logic
- * 5. OR, NOR: Additive binary logic
- *
- * Features:
- * - Strict syntax validation (unknown tokens, missing operands, unclosed parentheses)
- * - Case-insensitive operator keywords and variable names
- * - Automatic distinct variable discovery (max 3 variables: A, B, C)
- * - Dynamic 2^n truth table generation
- * - Step-by-step evaluation trace generation for pedagogical display
- * - Mathematical notation translation (e.g. Y = (A · B) + C)
- */
+// Boolean expression parser and evaluator for variables A, B, and C.
 public class BooleanExpression {
 
-    // ========================================================================
-    // Operator & Token Definitions
-    // ========================================================================
+    // Operator and token definitions
 
     public enum OperatorType {
         AND, OR, NOT, NAND, NOR, XOR, XNOR
@@ -58,10 +38,7 @@ public class BooleanExpression {
         }
     }
 
-    // ========================================================================
-    // AST (Abstract Syntax Tree) Hierarchy
-    // ========================================================================
-
+    // Expression syntax tree nodes
     public interface ExpressionNode {
         boolean evaluate(Map<String, Boolean> inputs);
         boolean evaluateWithSteps(Map<String, Boolean> inputs, List<String> steps);
@@ -233,10 +210,7 @@ public class BooleanExpression {
         }
     }
 
-    // ========================================================================
-    // BooleanExpression Instance Fields
-    // ========================================================================
-
+    // Expression instance fields and methods
     private final String rawExpression;
     private final ExpressionNode rootNode;
     private final List<String> variables;
@@ -263,16 +237,12 @@ public class BooleanExpression {
         return variables.size();
     }
 
-    /**
-     * Evaluates the expression using a variable assignment map.
-     */
+    // Evaluates expression using input map.
     public boolean evaluate(Map<String, Boolean> inputs) {
         return rootNode.evaluate(inputs);
     }
 
-    /**
-     * Convenience evaluation with up to three variables A, B, C.
-     */
+    // Evaluates expression with variables A, B, C.
     public boolean evaluate(boolean a, boolean b, boolean c) {
         Map<String, Boolean> map = new HashMap<>();
         map.put("A", a);
@@ -281,10 +251,7 @@ public class BooleanExpression {
         return evaluate(map);
     }
 
-    /**
-     * Formats the parsed expression in canonical mathematical notation:
-     * e.g., "Y = (A · B) + C"
-     */
+    // Formats expression in mathematical notation (e.g. Y = (A · B) + C).
     public String toMathematicalString() {
         String math = rootNode.toMathematicalString();
         // Strip outermost enclosing parentheses if present
@@ -308,27 +275,20 @@ public class BooleanExpression {
         return "Y = " + math;
     }
 
-    /**
-     * Generates a step-by-step evaluation trace for pedagogical explanation.
-     */
+    // Generates step-by-step evaluation trace.
     public List<String> getEvaluationSteps(Map<String, Boolean> inputs) {
         List<String> steps = new ArrayList<>();
 
-        // Step 1: Base variable values
         for (String var : variables) {
             boolean val = (inputs != null && inputs.getOrDefault(var, false));
             steps.add(var + " = " + (val ? "1" : "0"));
         }
 
-        // Sub-expression evaluation steps
         rootNode.evaluateWithSteps(inputs, steps);
-
         return steps;
     }
 
-    /**
-     * Generates all 2^n truth table rows dynamically for detected variables.
-     */
+    // Generates truth table rows dynamically for detected variables.
     public List<ExpressionTruthTableRow> generateTruthTable() {
         List<ExpressionTruthTableRow> table = new ArrayList<>();
         int n = variables.size();
@@ -336,8 +296,7 @@ public class BooleanExpression {
 
         for (int i = 0; i < rowCount; i++) {
             Map<String, Boolean> rowInputs = new LinkedHashMap<>();
-            // MSB first for standard digital logic truth table ordering:
-            // e.g. for A, B, C: 000, 001, 010, 011, 100, 101, 110, 111
+            // MSB first ordering (e.g., 000, 001, ... 111)
             for (int bit = 0; bit < n; bit++) {
                 String varName = variables.get(bit);
                 int shift = n - 1 - bit;
@@ -352,17 +311,7 @@ public class BooleanExpression {
         return table;
     }
 
-    // ========================================================================
-    // Static Parsing Entry Point & Tokenizer
-    // ========================================================================
-
-    /**
-     * Parses and strictly validates a Boolean expression string.
-     *
-     * @param expression Raw Boolean expression
-     * @return Validated BooleanExpression object
-     * @throws ExpressionParseException if expression has syntax errors or unsupported variables
-     */
+    // Parses and validates a Boolean expression string.
     public static BooleanExpression parse(String expression) throws ExpressionParseException {
         if (expression == null || expression.trim().isEmpty()) {
             throw new ExpressionParseException("Expression cannot be empty.", 0);
@@ -389,9 +338,7 @@ public class BooleanExpression {
         return new BooleanExpression(expression.trim(), root, sortedVars);
     }
 
-    /**
-     * Lexer / Tokenizer: Converts raw string into token stream with position tracking.
-     */
+    // Converts input string into a list of tokens.
     public static List<Token> tokenize(String input) throws ExpressionParseException {
         List<Token> tokens = new ArrayList<>();
         int i = 0;
@@ -425,13 +372,11 @@ public class BooleanExpression {
                 String word = input.substring(start, i);
                 String upper = word.toUpperCase();
 
-                // Check for single-character variables A, B, C
                 if (upper.equals("A") || upper.equals("B") || upper.equals("C")) {
                     tokens.add(new Token(TokenType.VARIABLE, upper, start));
                     continue;
                 }
 
-                // Check for operator keywords
                 TokenType opType = switch (upper) {
                     case "NOT"  -> TokenType.NOT;
                     case "AND"  -> TokenType.AND;
@@ -462,7 +407,7 @@ public class BooleanExpression {
                 continue;
             }
 
-            // Check for common symbolic shorthand attempts to give friendly error guidance
+            // Check for unsupported shorthand symbols
             if (ch == '!' || ch == '~') {
                 throw new ExpressionParseException("Symbol '" + ch + "' is not supported. Use 'NOT' keyword instead.", i);
             }
@@ -483,10 +428,7 @@ public class BooleanExpression {
         return tokens;
     }
 
-    // ========================================================================
-    // Recursive-Descent Parser
-    // ========================================================================
-
+    // Recursive-descent parser
     private static class Parser {
         private final List<Token> tokens;
         private final String rawExpression;
