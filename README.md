@@ -1,15 +1,6 @@
 # Logic Gate Simulator & Boolean Expression Lab
 ### Digital Logic Laboratory — Java 21 & JavaFX Desktop Application
 
-[![Java Version](https://img.shields.io/badge/Java-21%20LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
-[![JavaFX](https://img.shields.io/badge/JavaFX-21-2D8CFF?style=for-the-badge&logo=java&logoColor=white)](https://openjfx.io/)
-[![Maven](https://img.shields.io/badge/Maven-3.9+-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)](https://maven.apache.org/)
-[![Tests](https://img.shields.io/badge/Automated%20Tests-179%20Passed-22C55E?style=for-the-badge&logo=checkmarx&logoColor=white)](#10-automated-verification--test-suite)
-[![Architecture](https://img.shields.io/badge/Architecture-Pure%20OOP%20%26%20Clean%20Design-38BDF8?style=for-the-badge)](#5-architectural-separation-backend-vs-frontend)
-[![License](https://img.shields.io/badge/License-MIT-gray?style=for-the-badge)](LICENSE)
-
-A comprehensive, interactive digital electronics laboratory built in **Java 21 LTS** and **JavaFX 21** with **Apache Maven**. The application provides an intuitive desktop environment for studying, simulating, and validating both individual logic gates and multi-variable Boolean expressions in real time.
-
 ---
 
 ## Table of Contents
