@@ -3,7 +3,6 @@ package backend;
 import java.util.ArrayList;
 import java.util.List;
 
-// Base class for digital logic gates.
 public abstract class LogicGate {
     protected GateType type;
     protected String name;

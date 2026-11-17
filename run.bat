@@ -1,8 +1,7 @@
 @echo off
 setlocal
-echo =======================================================
 echo Running Logic Gate Simulator (JavaFX Desktop Application)
-echo =======================================================
+
 
 set "ROOT_DIR=%~dp0"
 if "%ROOT_DIR:~-1%"=="\" set "ROOT_DIR=%ROOT_DIR:~0,-1%"
